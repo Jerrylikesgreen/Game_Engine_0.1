@@ -6,7 +6,7 @@ from engine.core import GameEngine
 def main():
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
-    pygame.display.set_caption("My 2D Game")
+    pygame.display.set_caption("Game Engine_0.1")
 
 
     game_engine = GameEngine(screen)
