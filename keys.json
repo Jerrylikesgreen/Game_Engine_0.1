@@ -1,0 +1,6 @@
+{
+    "K_LEFT": "move_left",
+    "K_RIGHT": "move_right",
+    "K_UP": "jump",
+    "K_ESCAPE": "quit"
+}

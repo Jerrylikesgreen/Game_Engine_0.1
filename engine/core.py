@@ -1,12 +1,16 @@
 # engine/core.py
 
 import pygame
+from engine.input_handling import InputHandling
 
 class GameEngine:
-    def __init__(self, screen_width=800, screen_height=600):
+    def __init__(self, screen_width=800, screen_height=600, json="keys.json",  actions=None):
+
         # Screen dimensions or other config
         self.screen_width = screen_width
         self.screen_height = screen_height
+
+        self.handler = InputHandling(json, actions)
         
         # Collection of entities (game objects)
         self.entities = []
@@ -48,3 +52,6 @@ class GameEngine:
         # Draw each entity
         for entity in self.entities:
             entity.render(screen)
+
+    def input_handling(self, event):
+        self.handler.run(event)
