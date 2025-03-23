@@ -1,23 +1,28 @@
 import pygame
+from game.game_file import game_theme
 
-
-set_theme = game.game_file.get_theme()
 
 class Display:
-    def __init__(self, width, height, title):
-        self.width = width
-        self.height = height
-        self.title = title
+    """
+    Base display (window) class. Expects:
+      - width (int)
+      - height (int)
+      - title (string)
+      - game_theme (dict) e.g. the dictionary from game_file
+    """
+    def __init__(self, width, height, title, game_theme):
+        self.width = game_theme.get("display_width", width)
+        self.height = game_theme.get("display_height", height)
+        self.title = game_theme.get("display_title", title)
         self.screen = None
+        self.game_theme = game_theme
 
-    def set_game_theme(self, theme):
 
-        self.game_theme = theme
+    def set_game_theme(self, game_theme):
+        self.game_theme = game_theme
 
     def get_game_theme(self):
         return self.game_theme
-
-
 
     def create(self):
         pygame.init()
@@ -32,20 +37,38 @@ class Display:
         pygame.display.flip()
 
     def clear(self):
-        self.screen.fill((0, 0, 0))
+        # Use surface_color from the theme dictionary if you want
+        color = self.game_theme.get("surface_color", (0, 0, 0))
+        # If surface_color is a string like 'white', convert to pygame color
+        # or just do a quick mapping yourself. For now, let's just show an example:
+        if isinstance(color, str) and color.lower() == "white":
+            color = (255, 255, 255)
+        self.screen.fill(color)
 
 
-class Panel(Display):
-    def __init__(self, width, height, border_color, border_size, surface_color):
-        super().__init__(width, height, border_color)
-        self.border_color = border_color
-        self.border_size = 2
-        self.surface_color = "white"
+if __name__ == "__main__":
+    pygame.init()
+    screen = pygame.display.set_mode((800, 600))
+    clock = pygame.time.Clock()
 
-    def create(self):
-        super().create()
-        self.surface = pygame.Surface((self.width, self.height))
+    background = Background(
+        "background.png",
+        speed=(0.1, 0.1),
+        repeat_x=True,
+        repeat_y=True
+    )
 
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-class Button(Panel):
-    def __init__(self, width, height, border_color, border_size, text, text_color, text_size):
+        dt = clock.tick(60) / 1000.0  # milliseconds to seconds
+        background.update(dt)
+
+        screen.fill((0, 0, 0))
+        background.draw(screen)
+        pygame.display.flip()
+
+    pygame.quit()
