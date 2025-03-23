@@ -15,9 +15,10 @@ def main():
 
     game_engine = GameEngine(width, height, "keys.json", actions)
 
-
     running = True
     clock = pygame.time.Clock()
+
+    game_engine.map_editor(screen, clock)
 
     while running:
         for event in pygame.event.get():

@@ -1,7 +1,7 @@
 # engine/core.py
 
-import pygame
 from engine.input_handling import InputHandling
+from engine.map_editor.map_editor import MapEditor
 
 class GameEngine:
     def __init__(self, screen_width=800, screen_height=600, json="keys.json",  actions=None):
@@ -11,12 +11,14 @@ class GameEngine:
         self.screen_height = screen_height
 
         self.handler = InputHandling(json, actions)
+        self.map_handler = MapEditor("map.json")
         
         # Collection of entities (game objects)
         self.entities = []
         
         # Background color
         self.background_color = (0, 0, 0)  # Black by default
+
 
     def add_entity(self, entity):
         """
@@ -55,3 +57,6 @@ class GameEngine:
 
     def input_handling(self, event):
         self.handler.run(event)
+
+    def map_editor(self, screen, clock):
+        self.map_handler.run(screen, clock)
