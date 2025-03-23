@@ -1,15 +1,15 @@
 import pygame
 
-"""A class for scrolling a background image seamlessly in both directions.
-    image_path is the path to the image file to use as the background.
-    speed is the scrolling speed in pixels per second in the x and y directions.
-    position is the initial position of the background.
-    repeat_x and repeat_y are flags that determine if the background should loop in the x and y directions."""
-
-
-
-class Background:# speed for scrolling                              repeat x and y are for looping the background
-    def __init__(self, image_path, speed=(0, 0), position=(0, 0), repeat_x=True, repeat_y=False):
+class Background:
+    """A scrolling background that can repeat horizontally and/or vertically."""
+    def __init__(
+        self,
+        image_path,
+        speed=(0, 0),
+        position=(0, 0),
+        repeat_x=True,
+        repeat_y=False
+    ):
         self.image = pygame.image.load(image_path).convert_alpha()
         self.speed = pygame.Vector2(speed)
         self.position = pygame.Vector2(position)
@@ -17,51 +17,49 @@ class Background:# speed for scrolling                              repeat x and
         self.repeat_y = repeat_y
         self.rect = self.image.get_rect()
 
-"""Update the background position based on the speed and the time passed since the last update.
-        dt is the time passed since the last update in seconds."""
-
-
     def update(self, dt):
+        """Updates the background's position based on speed and loops it if repeat is enabled."""
         self.position += self.speed * dt
 
-        # Handle seamless looping: if the background is repeating, loop it back to the start
-        if self.repeat_x:
-        if self.repeat_x:  # Loop horizontally if repeat_x is enabled
-            if self.rect.width > 0:
-                self.position.x %= self.rect.width
+        # Loop horizontally if repeat_x is enabled and width is > 0
+        if self.repeat_x and self.rect.width > 0:
+            self.position.x %= self.rect.width
 
-        if self.repeat_y:  # Loop vertically if repeat_y is enabled
-            if self.rect.height > 0:
-                self.position.y %= self.rect.height
+        # Loop vertically if repeat_y is enabled and height is > 0
+        if self.repeat_y and self.rect.height > 0:
             self.position.y %= self.rect.height
 
-"""Draw the background on the given surface."""
     def draw(self, surface):
+        """Draws the repeating background onto the provided surface."""
         surface_rect = surface.get_rect()
-        # Loop horizontally if repeat_x is enabled
+
+        # Determine how far beyond the screen edges we'll draw
         start_x = -self.rect.width if self.repeat_x else 0
         end_x = surface_rect.width + (self.rect.width if self.repeat_x else 0)
-        
-        # Loop vertically if repeat_y is enabled
+
         start_y = -self.rect.height if self.repeat_y else 0
         end_y = surface_rect.height + (self.rect.height if self.repeat_y else 0)
 
-        x = self.position.x
-        y = self.position.y
+        # Start from the current offset
+        y = self.position.y + start_y
         while y < end_y:
+            x = self.position.x + start_x
             while x < end_x:
                 surface.blit(self.image, (x, y))
                 x += self.rect.width
-            x = start_x
             y += self.rect.height
 
-
-__name__ == "__main__":  # Test the background scrolling
+if __name__ == "__main__":
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
     clock = pygame.time.Clock()
 
-    background = Background("background.png", speed=(0.1, 0.1), repeat_x=True, repeat_y=True)
+    background = Background(
+        "background.png",
+        speed=(0.1, 0.1),
+        repeat_x=True,
+        repeat_y=True
+    )
 
     running = True
     while running:
@@ -69,8 +67,7 @@ __name__ == "__main__":  # Test the background scrolling
             if event.type == pygame.QUIT:
                 running = False
 
-        dt = clock.tick(60) / 1000  # Convert milliseconds to seconds
-
+        dt = clock.tick(60) / 1000.0  # milliseconds to seconds
         background.update(dt)
 
         screen.fill((0, 0, 0))
