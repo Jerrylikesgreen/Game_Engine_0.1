@@ -14,10 +14,11 @@ def main():
     particle_group = pygame.sprite.Group()
 
     actions = {
-        "move_left": move_left
+        "move_left": move_left,
+        "particle": lambda: create_explosion_effect(particle_group, pygame.mouse.get_pos(), width, height)
     }
 
-    game_engine = GameEngine(width, height, 32,"keys.json", actions)
+    game_engine = GameEngine(width, height, 32,"keys.json", "mouse.json", actions)
 
     running = True
     clock = pygame.time.Clock()
@@ -30,11 +31,6 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                # On left mouse button click, create an explosion at the mouse position.
-                if event.button == 1:
-                    pos = pygame.mouse.get_pos()
-                    create_explosion_effect(particle_group, pos, width, height)
 
             game_engine.input_handling(event)
 

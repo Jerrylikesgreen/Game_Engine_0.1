@@ -4,13 +4,13 @@ from engine.input_handling import InputHandling
 from engine.map_editor.map_editor import MapEditor
 
 class GameEngine:
-    def __init__(self, screen_width=800, screen_height=600, tile_size=32, json="keys.json",  actions=None):
+    def __init__(self, screen_width=800, screen_height=600, tile_size=32, json_keys=None, json_mouse=None, actions=None):
 
         # Screen dimensions or other config
         self.screen_width = screen_width
         self.screen_height = screen_height
 
-        self.handler = InputHandling(json, actions)
+        self.handler = InputHandling(json_keys, actions, json_mouse)
         self.map_handler = MapEditor("map.json", tile_size)
         
         # Collection of entities (game objects)
