@@ -4,8 +4,8 @@ from engine.map_editor.button import Button
 
 
 class MapEditor:
-    def __init__(self, map_filename):
-        self.tile_size = 32
+    def __init__(self, map_filename, tile_size):
+        self.tile_size = tile_size
         self.map_filename = map_filename
 
         # Automatically load all images from the "tiles" directory.
@@ -17,6 +17,10 @@ class MapEditor:
 
         self.undo_stack = []
         self.redo_stack = []
+
+        #Camera scrolling
+        self.camera_offset_x = 0
+        self.camera_offset_y = 0
 
         # Set up font for drawing buttons
         self.font = pygame.font.SysFont("arial", 16)
@@ -54,6 +58,15 @@ class MapEditor:
                     self.redo()
                 if event.key == pygame.K_r:
                     self.save_map(self.map_filename)
+
+                if event.key == pygame.K_LEFT:
+                    self.camera_offset_x = max(0, self.camera_offset_x - self.tile_size)
+                if event.key == pygame.K_RIGHT:
+                    self.camera_offset_x += self.tile_size
+                if event.key == pygame.K_UP:
+                    self.camera_offset_y = max(0, self.camera_offset_y - self.tile_size)
+                if event.key == pygame.K_DOWN:
+                    self.camera_offset_y += self.tile_size
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Check if click is on the Undo button
                 if self.redo_b.checkForInput(self.mouse_pos):
@@ -65,14 +78,13 @@ class MapEditor:
                 if self.save_b.checkForInput(self.mouse_pos):
                     self.save_map(self.map_filename)
 
-                map_offset_x = self.tile_size * 4 + 50
-                map_offset_y = 20
-                map_rect = pygame.Rect(map_offset_x, map_offset_y, self.map_surface.get_width(),
-                                       self.map_surface.get_height())
+                map_origin_x = self.tile_size * 4 + 50 - self.camera_offset_x
+                map_origin_y = 20 - self.camera_offset_y
+                map_rect = pygame.Rect(map_origin_x, map_origin_y,
+                                       self.map_surface.get_width(), self.map_surface.get_height())
                 if map_rect.collidepoint(self.mouse_pos):
-                    # Adjust the mouse position relative to the map surface.
-                    relative_x = self.mouse_pos[0] - map_offset_x
-                    relative_y = self.mouse_pos[1] - map_offset_y
+                    relative_x = self.mouse_pos[0] - map_origin_x
+                    relative_y = self.mouse_pos[1] - map_origin_y
                     col = relative_x // self.tile_size
                     row = relative_y // self.tile_size
                     if row < self.map_height and col < self.map_width:
@@ -121,7 +133,10 @@ class MapEditor:
             if self.selected_tile == tile_key:
                 pygame.draw.rect(self.tile_surface, (255, 0, 0), (pos_x, pos_y, self.tile_size * 2, self.tile_size * 2),2)
 
-        screen.blit(self.map_surface, (self.tile_size * 4 + 50, 20))
+        map_draw_x = self.tile_size * 4 + 50 - self.camera_offset_x
+        map_draw_y = 20 - self.camera_offset_y
+        screen.blit(self.map_surface, (map_draw_x, map_draw_y))
+
         screen.blit(self.tile_surface, (0, 0))
 
         self.undo_b = Button(image=None, pos=(720, 10), text_input="Undo (z)", font=self.font, base_color=(200, 200, 200), hovering_color=(150, 150, 150))
