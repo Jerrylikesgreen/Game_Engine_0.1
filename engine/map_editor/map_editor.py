@@ -95,7 +95,6 @@ class MapEditor:
         while running:
             clock.tick(60)
             self.handle_events(screen)
-            self.update()
             self.draw(screen)
         return True
 
@@ -130,6 +129,15 @@ class MapEditor:
                     self.open_map_menu(screen)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.redo_b.checkForInput(self.mouse_pos):
+                    self.redo()
+                if self.undo_b.checkForInput(self.mouse_pos):
+                    self.undo()
+                if self.load_b.checkForInput(self.mouse_pos):
+                    self.open_map_menu(screen)
+                if self.save_b.checkForInput(self.mouse_pos):
+                    self.save_map(self.map_filename)
+
                 # Check for palette clicks.
                 palette_x = 20
                 palette_y = 20
@@ -157,10 +165,6 @@ class MapEditor:
                     if row < self.map_height and col < self.map_width:
                         self.push_state()  # Save state before change
                         self.map[row][col] = self.selected_tile
-
-    def update(self):
-        # Update any dynamic parts if necessary
-        pass
 
     def draw(self, screen):
         screen.fill((50, 50, 150))
