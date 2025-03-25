@@ -81,7 +81,7 @@ class MapEditor:
     def load_new_map(self, filename):
         """Load a new map and update internal state."""
         self.map_filename = filename
-        self.map = self.load_map("maps/" + self.map_filename)
+        self.map = self.load_map(self.map_filename)
         self.map_width = len(self.map[0])
         self.map_height = len(self.map)
         # Recreate the map surface with the new dimensions.

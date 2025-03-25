@@ -1,0 +1,14 @@
+{
+  "maps": [
+    {
+      "name": "Grassland1",
+      "filename": "map.json",
+      "description": "A wide open plain with grass tiles."
+    },
+    {
+      "name": "Grassland2",
+      "filename": "map1.json",
+      "description": "A dark, confined dungeon."
+    }
+  ]
+}
