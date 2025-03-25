@@ -11,7 +11,7 @@ class GameEngine:
         self.screen_height = screen_height
 
         self.handler = InputHandling(json, actions)
-        self.map_handler = MapEditor("map.json")
+        self.map_handler = MapEditor("maps/map.json")
         
         # Collection of entities (game objects)
         self.entities = []
